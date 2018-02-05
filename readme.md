@@ -3,6 +3,6 @@
 gem install sinatra
 ```
 
-2. run using `ruby blockchain.rb`
+2. run using `rackup config.ru`
 
-3. View at: http://localhost:4567
+3. View at: http://localhost:9292

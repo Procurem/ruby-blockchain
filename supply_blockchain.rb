@@ -10,8 +10,7 @@ require_relative 'blockchain'
 
 # Routes
 get '/' do
-   @@supply.transactions.to_s +
-   @@supply.chain.to_s
+   binding.pry
 end
 
 post '/transaction/new' do
@@ -46,6 +45,12 @@ get '/mine' do
     }
 
     [200, response.to_json]
+end
+
+post '/nodes/register' do
+  address = "#{request.env["SERVER_NAME"]}:#{request.env["SERVER_PORT"]}"
+  node = @@supply.register_node(address)
+  [201, "Node #{node} added"]
 end
 
 get '/chain' do

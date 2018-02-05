@@ -1,11 +1,12 @@
 require 'json'
-require 'digest' #sha-256 for hashing
+require 'digest'
+require 'uri'
 
 
 class Blockchain
   ### Manages the chain ###
 
-  attr_accessor :chain, :transactions
+  attr_accessor :chain, :transactions, :nodes
 
   def initialize
     self.chain = []
@@ -13,7 +14,18 @@ class Blockchain
 
     # Creating the Genesis Block
     self.new_block(100,1)
+
+    self.nodes = Set.new
   end
+
+  ## Node Maintainence ##
+
+  def register_node(address)
+    self.nodes << address
+    address
+  end
+
+  #######################
 
   def new_transaction(sender, recipient, amount)
     # Add new transaction to transactions array
@@ -27,9 +39,11 @@ class Blockchain
       'amount' => amount
     }
 
-    self.last_block['index'] + 1  
+    self.last_block['index'] + 1
 
   end
+
+  ## Chain Maintainence ##
 
   def new_block(proof, last_block_hash=nil)
     # Creates a new block and adds it to the chain
@@ -56,6 +70,18 @@ class Blockchain
 
   end
 
+  def valid_chain(chain)
+    # Iterate over available chain to verify hashes and proof of work
+
+
+
+  end
+
+  ########################
+
+
+  ## Utility Methods ##
+
   def hash(block)
     # Hashes a block
 
@@ -67,6 +93,8 @@ class Blockchain
     # Gets last block in chain
     return self.chain[-1]
   end
+
+  #####################
 
   # Proof of Work Algorithm
   # We needs a calculator and a validator
