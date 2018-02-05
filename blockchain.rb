@@ -1,8 +1,9 @@
 require 'json'
-require 'digest' #sha-256
+require 'digest' #sha-256 for hashing
+
 
 class Blockchain
-  # Manages the chain
+  ### Manages the chain ###
 
   attr_accessor :chain, :transactions
 
@@ -10,6 +11,7 @@ class Blockchain
     self.chain = []
     self.transactions = []
 
+    # Creating the Genesis Block
     self.new_block(100,1)
   end
 
@@ -25,6 +27,7 @@ class Blockchain
       'amount' => amount
     }
 
+    self.last_block['index'] + 1  
 
   end
 
@@ -49,6 +52,7 @@ class Blockchain
 
     ## Add to the chain
     self.chain << block
+    block
 
   end
 
