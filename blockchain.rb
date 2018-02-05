@@ -1,6 +1,7 @@
 require 'json'
 require 'digest'
 require 'uri'
+require 'net/http'
 
 
 class Blockchain
@@ -70,10 +71,56 @@ class Blockchain
 
   end
 
-  def valid_chain(chain)
+  def valid_chain?(chain)
     # Iterate over available chain to verify hashes and proof of work
+    last_block = chain[0]
+    current_index = 1
 
+    while current_index < self.chain.size
+      block = chain[current_index]
 
+      # Checks to see if the transactions or data has been altered
+      return false if block["previous_hash"] != self.hash(last_block)
+
+      # Checks the proof of work
+      return false unless self.validate_proof(last_block["proof"], block['proof'])
+
+      # Move to the next block
+      last_block = block
+      current_index += 1
+    end
+
+    return true
+
+  end
+
+  def resolve_conflicts
+    neighbours = self.nodes
+    new_chain = nil
+
+    max_length = self.chain.size
+
+    neighbours.each do |node|
+      response = Net::HTTP.get_response(URI("http://#{node}/chain"))
+
+      if response.code == "200"
+        @length = JSON.parse(response.body)['length']
+        @chain = JSON.parse(response.body)['chain']
+      end
+
+      # Check if the length is longer and the chain is valid
+      if @length > max_length and self.validate_chain(@chain)
+          max_length = @length
+          new_chain = @chain
+        end
+
+      if new_chain
+        self.chain = new_chain
+        return true
+      end
+    end
+
+          return false
 
   end
 

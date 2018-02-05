@@ -1,2 +1,2 @@
-require './supply_blockchain'
+require './server'
 run Sinatra::Application
